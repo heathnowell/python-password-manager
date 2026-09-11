@@ -1,150 +1,102 @@
-# Python Auto Typer
+# Python Password Manager
 
-A desktop typing-automation application built with Python and Tkinter.
+A simple local password manager built in Python that stores credentials in an encrypted JSON file.
 
-The application accepts user-provided text and types it through the keyboard controller at a configurable speed. It also includes hotkey controls, progress tracking, estimated completion time, optional simulated typing errors, and pauses.
+The project uses **Fernet symmetric encryption** to encrypt stored passwords and **bcrypt** to verify the master password.
 
 ## Features
 
-- Desktop GUI built with Tkinter
-- Paste or enter text to be typed automatically
-- Adjustable typing speed in words per minute (WPM)
-- Adjustable simulated typo rate
-- Configurable global hotkey
-- Start, stop, pause, and resume controls
-- Progress bar and percentage tracking
-- Estimated remaining time
-- Word-based and randomized pauses
-- Simulated nearby-key typing mistakes followed by correction
-- Background threads so the interface remains responsive
+- Add and store account credentials
+- Encrypt passwords before saving them
+- Decrypt saved passwords when viewing them
+- Remove individual saved credentials
+- Delete the local password file
+- Verify access using a bcrypt-hashed master password
+- Store credentials locally in `passwords.json`
 
-## Technologies
+## Technologies Used
 
 - Python
-- Tkinter
-- `pynput`
-- Threading
-- Regular expressions
-- Randomization
-- Time-based event handling
+- `cryptography` / Fernet
+- `bcrypt`
+- JSON file storage
 
-## Project Structure
+## How It Works
+
+The program asks the user to authenticate with a master password before accessing stored credentials.
+
+After authentication, the user provides a Fernet encryption key. That key is used to encrypt passwords before they are written to `passwords.json` and to decrypt them when they are retrieved.
+
+The master password itself is not stored in plaintext. The program verifies it against a bcrypt hash.
+
+## Repository Structure
 
 ```text
-python-auto-typer/
-├── autotype.py
+python-password-manager/
+├── .gitignore
 ├── README.md
-├── requirements.txt
-└── .gitignore
+├── password_manager.py
+└── requirements.txt
 ```
 
-## Installation
+`passwords.json` should remain local and should not be committed to GitHub.
 
-Clone the repository:
+## Requirements
 
-```bash
-git clone https://github.com/YOUR-USERNAME/python-auto-typer.git
-cd python-auto-typer
-```
+- Python 3
+- cryptography
+- bcrypt
 
-Install the required dependency:
-
-```bash
-pip install pynput
-```
-
-Tkinter is included with many standard Python installations. Depending on your operating system, it may need to be installed separately.
-
-If the repository includes a `requirements.txt` file:
+Install the required packages with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
-
-Run the application:
-
-```bash
-python autotype.py
-```
-
-Then:
-
-1. Enter or paste text into the text box.
-2. Set the desired WPM.
-3. Set the desired typo percentage.
-4. Optionally choose a custom hotkey.
-5. Click **Start Typing**.
-6. Move your cursor to the application where the text should be entered.
-7. Press the configured hotkey to begin.
-8. Press the hotkey again to pause or resume.
-9. Use **Stop** to end the typing process.
-
-The default hotkey is:
+Example `requirements.txt`:
 
 ```text
-Print Screen
+cryptography
+bcrypt
 ```
 
-## How It Works
+## Running the Program
 
-### Typing Speed
+From the repository folder, run:
 
-The program converts the selected WPM into a delay between characters:
-
-```python
-type_delay = 60 / (wpm * 5)
+```bash
+python password_manager.py
 ```
 
-### Typing Automation
+Follow the terminal prompts to authenticate, provide the encryption key, and use the password manager.
 
-The application uses `pynput.keyboard.Controller` to send keyboard input one character at a time.
+## Security Notes
 
-### Simulated Errors
+This project was built as a learning project and is **not intended to replace a production password manager**.
 
-The project includes a map of nearby keyboard keys. When an error is triggered, it types a nearby character, waits briefly, presses Backspace, and then continues.
+Important considerations:
 
-### Pause Pattern
-
-The program creates a repeatable sequence of word-count intervals and pauses after those intervals while typing.
-
-### Progress and Time Estimation
-
-A background thread tracks:
-
-- Characters typed
-- Percentage complete
-- Estimated time remaining
-
-This allows the GUI to update while the typing process is running.
+- Never commit real passwords or `passwords.json` to GitHub.
+- Never publish a real Fernet key.
+- The current project expects the encryption key to be provided by the user rather than deriving it from the master password.
+- A production implementation would use more robust key management and additional security protections.
 
 ## What I Learned
 
 This project helped me practice:
 
-- GUI development with Tkinter
-- Keyboard input automation
-- Multithreading
-- Global hotkey handling
-- State management
-- Event-driven programming
-- Timing and progress calculations
-- User-configurable application settings
-- Debugging a larger Python application
+- Encrypting and decrypting data in Python
+- Password hashing and authentication with bcrypt
+- Reading and writing JSON data
+- Managing local credential storage
+- Working with third-party Python security libraries
+- Designing a simple command-line workflow
 
-## Future Improvements
+## Possible Future Improvements
 
-Possible future improvements include:
-
-- Save user settings between sessions
-- Cleaner separation between GUI and typing logic
-- Cross-platform hotkey testing
-- More robust input validation
-- Additional pause behavior controls
-- Packaging the application as a standalone executable
-- Automated tests for timing and text-processing logic
-
-## Responsible Use
-
-This project is intended for legitimate automation, testing, accessibility, and personal programming practice. Users are responsible for following the rules, policies, and terms of service of any software or platform where the tool is used.
+- Use `getpass` so the master password is hidden while typing
+- Improve encryption-key management
+- Support multiple accounts with the same username
+- Add stronger input validation and error handling
+- Add a graphical user interface
+- Add automated tests
